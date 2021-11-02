@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Project;
 use App\Entity\Times;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -14,9 +15,27 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class TimesRepository extends ServiceEntityRepository
 {
+    const INPUT_DATA_ERROR = 'Error in input data';
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Times::class);
+    }
+
+    public function getDataPerPeriod(User $user, Project $project = null, string $dateStart, string $dateEnd): array
+    {
+        if (!$dateStart || !$dateEnd || !$user) {
+            throw new \Exception(self::INPUT_DATA_ERROR);
+        }
+        $qb = $this->createQueryBuilder('t')
+            ->where('t.user = :user')
+            ->andWhere('t.startedAt >= :dateStart AND t.finishedAt <= :dateEnd');
+        if ($project) {
+            $qb->andWhere('t.project = :project')->setParameter('project', $project);
+        }
+        $qb->setParameters(['user' => $user, 'dateStart' => $dateStart, 'dateEnd' => $dateEnd]);
+
+        return $qb->getQuery()->getArrayResult();
     }
 
     // /**
