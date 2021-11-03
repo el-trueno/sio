@@ -43,6 +43,8 @@ class Times
      */
     private $isDeleted;
 
+    private $diff;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -106,5 +108,17 @@ class Times
         $this->isDeleted = $isDeleted;
 
         return $this;
+    }
+
+    public function getDiff(): ?string
+    {
+        $start = $this->getStartedAt();
+        $finish = $this->getFinishedAt();
+        if ($start > $finish) {
+            return null;
+        }
+        $interval = $finish->diff($start);
+
+        return $interval->format('%a days %h hours');
     }
 }

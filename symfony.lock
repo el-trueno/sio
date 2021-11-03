@@ -97,6 +97,9 @@
     "laminas/laminas-code": {
         "version": "4.4.3"
     },
+    "monolog/monolog": {
+        "version": "1.26.1"
+    },
     "nikic/php-parser": {
         "version": "v4.13.0"
     },
@@ -227,6 +230,24 @@
     "symfony/mime": {
         "version": "v4.4.31"
     },
+    "symfony/monolog-bridge": {
+        "version": "v4.4.27"
+    },
+    "symfony/monolog-bundle": {
+        "version": "3.7",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "3.7",
+            "ref": "a7bace7dbc5a7ed5608dbe2165e0774c87175fe6"
+        },
+        "files": [
+            "./config/packages/test/monolog.yaml",
+            "./config/packages/prod/monolog.yaml",
+            "./config/packages/prod/deprecations.yaml",
+            "./config/packages/dev/monolog.yaml"
+        ]
+    },
     "symfony/options-resolver": {
         "version": "v4.4.30"
     },
@@ -348,6 +369,19 @@
     },
     "symfony/uid": {
         "version": "v5.3.10"
+    },
+    "symfony/validator": {
+        "version": "4.4",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "4.3",
+            "ref": "3eb8df139ec05414489d55b97603c5f6ca0c44cb"
+        },
+        "files": [
+            "./config/packages/validator.yaml",
+            "./config/packages/test/validator.yaml"
+        ]
     },
     "symfony/var-dumper": {
         "version": "v4.4.33"
