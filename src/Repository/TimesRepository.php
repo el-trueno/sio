@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Project;
 use App\Entity\Times;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -21,7 +22,7 @@ class TimesRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Times::class);
     }
-
+/*
     public function getDataPerPeriod(User $user, Project $project = null, string $dateStart, string $dateEnd): array
     {
         if (!$dateStart || !$dateEnd || !$user) {
@@ -36,6 +37,30 @@ class TimesRepository extends ServiceEntityRepository
         $qb->setParameters(['user' => $user, 'dateStart' => $dateStart, 'dateEnd' => $dateEnd]);
 
         return $qb->getQuery()->getArrayResult();
+    }
+*/
+    public function qbForTimeInterval(string $startedAt, string $finishedAt): QueryBuilder
+    {
+        return $this->createQueryBuilder('t')
+            ->where('t.startedAt >= :startedAt')
+            ->andWhere('t.finishedAt <= :finishedAt')
+            ->setParameter('startedAt', $startedAt)
+            ->setParameter('finishedAt', $finishedAt);
+    }
+
+    public function summarize(string $startedAt, string $finishedAt): array
+    {
+        return $this->createQueryBuilder('t')
+            ->select('t')
+            ->addSelect('sum(unix_timestamp(t.finishedAt) - unix_timestamp(t.startedAt))')
+            ->leftJoin('t.user', 'u')
+            ->where('t.startedAt >= :startedAt')
+            ->andWhere('t.finishedAt <= :finishedAt')
+            ->groupBy('t.user')
+            ->addGroupBy('t.project')
+            ->setParameter('startedAt', $startedAt)
+            ->setParameter('finishedAt', $finishedAt)
+            ->getQuery()->getResult();
     }
 
     // /**

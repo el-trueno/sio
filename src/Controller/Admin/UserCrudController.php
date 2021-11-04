@@ -3,6 +3,8 @@
 namespace App\Controller\Admin;
 
 use App\Entity\User;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
@@ -27,6 +29,11 @@ class UserCrudController extends AbstractCrudController
             ChoiceField::new('roles')->allowMultipleChoices(true)->setChoices(['"ROLE_USER"' => 'ROLE_USER', '"ROLE_ADMIN"' => 'ROLE_ADMIN']),
             Field::new('isDeleted'),
         ];
+    }
+
+    public function configureActions(Actions $actions): Actions
+    {
+        return $actions->setPermission(Action::DELETE, 'ROLE_ADMIN')->setPermission(Action::INDEX, 'ROLE_ADMIN');
     }
 
     private function setUserPlainPassword(User $user): void

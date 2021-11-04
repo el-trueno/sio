@@ -119,6 +119,6 @@ class Times
         }
         $interval = $finish->diff($start);
 
-        return $interval->format('%a days %h hours');
+        return $interval->format('%h hours %i minutes %s seconds');
     }
 }

@@ -1,0 +1,18 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block content_title 'Summarize '%}
+{% block page_content %}
+    <table width="100%">
+        <thead> {# ... #} </thead>
+        <tbody>
+        <th class="text-center">Name</th><th class="text-center">Project</th><th class="text-center">time for period</th>
+        {% for user_data in data %}
+            <tr class="datagrid-row-empty">
+                <td class="text-center">{{ user_data[0].user.name }}</td>
+                <td class="text-center">{{ user_data[0].project.name }}</td>
+                <td class="text-center">{{ user_data[1] }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

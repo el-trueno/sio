@@ -63,9 +63,10 @@ class DashboardController extends AbstractDashboardController
             MenuItem::section('Users')->setPermission('ROLE_ADMIN'),
             MenuItem::linkToCrud('Users', 'fa fa-tags', User::class)->setPermission('ROLE_ADMIN'),
             MenuItem::section('Projects')->setPermission('ROLE_ADMIN'),
-            MenuItem::linkToCrud('Projects', 'fa fa-tags', Project::class)->setPermission('ROLE_ADMIN'),
             MenuItem::linkToCrud('Add project', 'fa fa-tags', Project::class)->setAction('new')->setPermission('ROLE_ADMIN'),
-            MenuItem::subMenu('Projects', 'fa fa-tags')->setSubItems($this->getProjectTimesByUser())->setPermission('ROLE_USER')
+            MenuItem::subMenu('Projects', 'fa fa-tags')->setSubItems($this->getProjectTimesByUser())->setPermission('ROLE_USER'),
+            MenuItem::linkToRoute('Summarize per day', 'fa fa-chart-bar', 'summarizeDay')->setPermission('ROLE_ADMIN'),
+            MenuItem::linkToRoute('Summarize per month', 'fa fa-chart-bar', 'summarizeMonth')->setPermission('ROLE_ADMIN')
         ];
         //yield MenuItem::linktoDashboard('Dashboard', 'fa fa-home');
         // yield MenuItem::linkToCrud('The Label', 'fas fa-list', EntityClass::class);

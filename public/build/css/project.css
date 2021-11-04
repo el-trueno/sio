@@ -1,0 +1,8 @@
+.start {
+    !important; background-color: #ffd6d5;
+    position: static
+}
+#timer {
+    position: relative;
+    color: #ff1215;
+}
