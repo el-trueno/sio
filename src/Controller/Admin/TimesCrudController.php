@@ -2,7 +2,9 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\Project;
 use App\Entity\Times;
+use App\Service\ExportService;
 use App\Service\GetTimeIntervalService;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
@@ -31,13 +33,17 @@ class TimesCrudController extends AbstractCrudController
     /** @var GetTimeIntervalService  */
     private $getTimeIntervalService;
 
+    /** @var ExportService  */
+    private $exportService;
+
     /** @var EntityManagerInterface  */
     private $entityManager;
 
-    public function __construct(RequestStack $requestStack, GetTimeIntervalService $getTimeIntervalService, EntityManagerInterface $entityManager)
+    public function __construct(RequestStack $requestStack, GetTimeIntervalService $getTimeIntervalService, EntityManagerInterface $entityManager, ExportService $exportService)
     {
         $this->requestStack = $requestStack;
         $this->getTimeIntervalService = $getTimeIntervalService;
+        $this->exportService = $exportService;
         $this->entityManager = $entityManager;
     }
 
@@ -50,10 +56,14 @@ class TimesCrudController extends AbstractCrudController
     {
         $startedAt = $this->requestStack->getCurrentRequest()->get('startedAt');
         $finishedAt = $this->requestStack->getCurrentRequest()->get('finishedAt');
-        $qb = $this->entityManager->getRepository(Times::class)->createQueryBuilder('t');
-        if ($startedAt && $finishedAt) {
-            $qb = $this->entityManager->getRepository(Times::class)->qbForTimeInterval($startedAt, $finishedAt);
+        if (in_array('ROLE_ADMIN', $this->getUser()->getRoles())) {
+            $user = null;
+        } else {
+            $user = $this->getUser();
         }
+        $projectId = $this->requestStack->getCurrentRequest()->get('project');
+        $project = $projectId ? $this->entityManager->getRepository(Project::class)->find($projectId) : null;
+        $qb = $this->entityManager->getRepository(Times::class)->qbForTimeInterval($startedAt, $finishedAt, $user, $project);
 
         return $qb;
     }
@@ -105,7 +115,7 @@ class TimesCrudController extends AbstractCrudController
             ->linkToCrudAction('oneDayAction')->createAsGlobalAction()->displayAsLink();
     }
 
-    public function oneDayAction()
+    public function oneDayAction(): Response
     {
         $adminUrlGenerator = $this->get(AdminUrlGenerator::class);
         $oneDayInterval = $this->getTimeIntervalService->prepareDayInterval();
@@ -121,7 +131,7 @@ class TimesCrudController extends AbstractCrudController
             ->linkToCrudAction('oneMonthAction')->createAsGlobalAction()->displayAsLink();
     }
 
-    public function oneMonthAction()
+    public function oneMonthAction(): Response
     {
         $adminUrlGenerator = $this->get(AdminUrlGenerator::class);
         $oneMonthInterval = $this->getTimeIntervalService->prepareMonthInterval();
@@ -134,7 +144,20 @@ class TimesCrudController extends AbstractCrudController
     {
         return Action::new('export', 'export')
             ->setIcon('fa fa-file')
-            ->linkToCrudAction('exportAction')->createAsGlobalAction()->displayAsButton();
+            ->linkToCrudAction('exportAction')->createAsGlobalAction()->displayAsLink();
+    }
+
+    public function exportAction(): Response
+    {
+        $request = $this->requestStack->getCurrentRequest()->query->get('referrer');
+        parse_str($request, $parsed);
+        $user = $parsed['user'] ?? null;
+        $project = $parsed['project'] ?? null;
+        $startedAt = $parsed['startedAt'] ?? null;
+        $finishedAt = $parsed['finishedAt'] ?? null;
+        $this->exportService->exportXls($user, $project, $startedAt, $finishedAt);
+
+        return new Response();
     }
 
     /**

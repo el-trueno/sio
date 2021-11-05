@@ -72,10 +72,8 @@ class GetTimeIntervalService
     public function summary(string $startedAt, string $finishedAt): array
     {
         $data = $this->entityManager->getRepository(Times::class)->summarize($startedAt, $finishedAt);
-        $result = [];
-        foreach ($data as $value) {
-            $result[] = [$value[0], gmdate("H:i:s", $value[1])];
-        }
+        $result = array_map(function($value) {
+            return [$value[0], gmdate("H:i:s", $value[1])]; }, $data);
 
         return $result;
     }

@@ -1,2 +1,61 @@
-on db must remove ONLY_FULL_GROUP
+Task
+Create an application with which, for
+example, a freelancer can record his hours
+worked. For this purpose, time logs should
+be created, edited and deleted. In addition,
+there should be an overview of how much
+was worked per day / week / month. The
+individual subtasks are described below.
+
+Technologically Symfony 4 (or Laravel)
+should be used as framework and MongoDB
+or MySQL as database. Other technologies,
+frameworks or libraries can be used as you
+like. Design and layout are not important, but
+should be usable for an end-user.
+
+You can upload the finished result to Github
+or send it by email.
+Part A
+Create a form to record working hours. This
+can be done either as a "start / stop" button
+to track a log or via a form with start time and
+end time.
+Part B
+The time logs should be displayed in a table,
+be correctable afterwards via an edit button
+and be deletable via a delete button.
+
+Part C
+Create an evaluation that shows either in a
+chart or in a table how much someone has
+worked per day / month.
+Optional additional tasks:
+A
+Create an export in CSV or Excel format that
+contains recorded times for further
+processing (such as in Excel).
+B
+Make it possible to create projects and
+assign times to them. The evaluation should
+then be structured according to project.
+
+------------------------------------------------------------------------
+
+Implementation:
+The application uses Symfony4.4, PHP7.4, MySQL, JQuery.
+Based on EasyAdminBundle. The dump of the database is in the root of the repository.
+There are login form for users (for default symfony server 127.0.0.1:8000/admin). Exists 2 users: user@sio.de:111111, admin@sio.de:111111 with different roles.
+Admin can create/edit/delete users, projects, times.
+Both user and admin can create time record (should press button "start" for starting the timer and "stop" for ending.
+JQuery script for timer found on Stackoverflow.
+There is some statistic per month and per day. Available just in the admin interface (admin can see all records for all users and can soft delete records).
+The user can see his statistic in his interface but can not change it.
+There are possibilities to export in Xls file. Exported will be data on the current screen.
+The database could be loaded from the dump and with migrations.
+I didn't write any tests!
+I worked on a project for approximately 11-12 hours.
+
+Problems:
+On DB must remove ONLY_FULL_GROUP. In MySQL console should write:
 SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));

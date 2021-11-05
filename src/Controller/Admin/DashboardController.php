@@ -68,11 +68,9 @@ class DashboardController extends AbstractDashboardController
             MenuItem::linkToRoute('Summarize per day', 'fa fa-chart-bar', 'summarizeDay')->setPermission('ROLE_ADMIN'),
             MenuItem::linkToRoute('Summarize per month', 'fa fa-chart-bar', 'summarizeMonth')->setPermission('ROLE_ADMIN')
         ];
-        //yield MenuItem::linktoDashboard('Dashboard', 'fa fa-home');
-        // yield MenuItem::linkToCrud('The Label', 'fas fa-list', EntityClass::class);
     }
 
-    public function getProjectTimesByUser()
+    public function getProjectTimesByUser(): array
     {
         $linksArray = [];
         $user = $this->getUser();

@@ -41,7 +41,7 @@ class Times
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $isDeleted;
+    private $isDeleted = false;
 
     private $diff;
 

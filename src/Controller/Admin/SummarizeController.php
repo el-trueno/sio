@@ -7,6 +7,7 @@ namespace App\Controller\Admin;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Service\GetTimeIntervalService;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\Response;
 
 class SummarizeController extends AbstractController
 {
@@ -21,9 +22,9 @@ class SummarizeController extends AbstractController
     /**
      * @Route ("/admin/summarizeDay", name="summarizeDay")
      */
-    public function summarizeDay()
+    public function summarizeDay(): Response
     {
-        $perDay = $this->getIntervalService->prepareDayInterval(); //dd($this->getIntervalService->summary($perDay[0], $perDay[1]));
+        $perDay = $this->getIntervalService->prepareDayInterval();
 
         return $this->render('admin/summarize/index.html.twig', ['data' => $this->getIntervalService->summary($perDay[0], $perDay[1]), 'period' => 'per day']);
     }
@@ -31,9 +32,9 @@ class SummarizeController extends AbstractController
     /**
      * @Route ("/admin/summarizeMonth", name="summarizeMonth")
      */
-    public function summarizeMonth()
+    public function summarizeMonth(): Response
     {
-        $perDay = $this->getIntervalService->prepareMonthInterval(); //dd($this->getIntervalService->summary($perDay[0], $perDay[1]));
+        $perDay = $this->getIntervalService->prepareMonthInterval();
 
         return $this->render('admin/summarize/index.html.twig', ['data' => $this->getIntervalService->summary($perDay[0], $perDay[1]), 'period' => 'per day']);
     }
