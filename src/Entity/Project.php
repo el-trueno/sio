@@ -30,7 +30,7 @@ class Project
     private $users;
 
     /**
-     * @ORM\Column(type="time", nullable=true)
+     * @ORM\Column(type="datetime", nullable=true)
      */
     private $approximatedTime;
 
@@ -107,5 +107,10 @@ class Project
         $this->description = $description;
 
         return $this;
+    }
+
+    public function __toString()
+    {
+        return $this->getName();
     }
 }

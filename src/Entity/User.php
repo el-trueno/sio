@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
@@ -24,6 +25,11 @@ class User implements UserInterface
      * @ORM\Column(type="string", length=180, unique=true)
      */
     private $email;
+
+    /**
+     * @ORM\Column(type="string", length=180)
+     */
+    private $name;
 
     /**
      * @ORM\Column(type="json")
@@ -45,6 +51,17 @@ class User implements UserInterface
      * @ORM\ManyToMany(targetEntity=Project::class, mappedBy="users")
      */
     private $projects;
+
+    /**
+     * @Assert\NotBlank
+     * @Assert\Length(min=5, max=128)
+     */
+    private $plainPassword;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $isDeleted = false;
 
     public function __construct()
     {
@@ -170,4 +187,52 @@ class User implements UserInterface
 
         return $this;
     }
+
+    public function getPlainPassword(): ?string
+    {
+        return $this->plainPassword;
+    }
+
+    public function setPlainPassword(string $password): void
+    {
+        $this->plainPassword = $password;
+    }
+
+    public function __toString(): string
+    {
+        return $this->email;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDeleted(): bool
+    {
+        return $this->isDeleted;
+    }
+
+    /**
+     * @param bool $isDeleted
+     */
+    public function setIsDeleted(bool $isDeleted): void
+    {
+        $this->isDeleted = $isDeleted;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param mixed $name
+     */
+    public function setName($name): void
+    {
+        $this->name = $name;
+    }
+
 }

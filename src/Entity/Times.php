@@ -41,7 +41,9 @@ class Times
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $isDeleted;
+    private $isDeleted = false;
+
+    private $diff;
 
     public function getId(): ?int
     {
@@ -106,5 +108,17 @@ class Times
         $this->isDeleted = $isDeleted;
 
         return $this;
+    }
+
+    public function getDiff(): ?string
+    {
+        $start = $this->getStartedAt();
+        $finish = $this->getFinishedAt();
+        if ($start > $finish) {
+            return null;
+        }
+        $interval = $finish->diff($start);
+
+        return $interval->format('%h hours %i minutes %s seconds');
     }
 }

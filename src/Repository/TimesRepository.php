@@ -2,8 +2,11 @@
 
 namespace App\Repository;
 
+use App\Entity\Project;
 use App\Entity\Times;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -19,32 +22,43 @@ class TimesRepository extends ServiceEntityRepository
         parent::__construct($registry, Times::class);
     }
 
-    // /**
-    //  * @return Times[] Returns an array of Times objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    public function getDataPerPeriod(User $user = null, Project $project = null, string $dateStart = null, string $dateEnd = null): array
     {
-        return $this->createQueryBuilder('t')
-            ->andWhere('t.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('t.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
+         return $this->qbForTimeInterval($dateStart, $dateEnd, $user, $project)->getQuery()->getResult();
     }
-    */
 
-    /*
-    public function findOneBySomeField($value): ?Times
+    public function qbForTimeInterval(string $dateStart = null, string $dateEnd = null, User $user = null, Project $project = null): QueryBuilder
+    {
+        $qb = $this->createQueryBuilder('t');
+        if ($dateStart) {
+            $qb->where('t.startedAt >= :dateStart')->setParameter('dateStart', $dateStart);
+        }
+        if ($dateEnd) {
+            $qb->andWhere('t.finishedAt <= :dateEnd')->setParameter('dateEnd', $dateEnd);
+        }
+        if ($project) {
+            $qb->andWhere('t.project = :project')->setParameter('project', $project);
+        }
+        if ($user) {
+            $qb->andWhere('t.user = :user')->setParameter('user', $user);
+            $qb->andWhere('t.isDeleted = :isDeleted')->setParameter('isDeleted', false);
+        }
+
+        return $qb;
+    }
+
+    public function summarize(string $startedAt, string $finishedAt): array
     {
         return $this->createQueryBuilder('t')
-            ->andWhere('t.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+            ->select('t')
+            ->addSelect('sum(unix_timestamp(t.finishedAt) - unix_timestamp(t.startedAt))')
+            ->leftJoin('t.user', 'u')
+            ->where('t.startedAt >= :startedAt')
+            ->andWhere('t.finishedAt <= :finishedAt')
+            ->groupBy('t.user')
+            ->addGroupBy('t.project')
+            ->setParameter('startedAt', $startedAt)
+            ->setParameter('finishedAt', $finishedAt)
+            ->getQuery()->getResult();
     }
-    */
 }
